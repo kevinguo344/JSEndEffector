@@ -2,9 +2,6 @@
 #define DIRECTION_PIN 10
 #define STEPS_PER_TURN 800
 
-
-//int delayBtwSteps = 100000;
-
 void setup(){
   Serial.begin(115200);
   pinMode(STEP_PIN, OUTPUT);
@@ -16,9 +13,9 @@ void loop(){
     String message = Serial.readString();								            // Serial message will be in format "steps/delay"
     Serial.print("Kevin: "); Serial.println(message); 				      // prints out message
     // reference: https://gist.github.com/mattfelsen/9467420
-    float num_steps, delay_microseconds; 									            // num_steps must be an integer, delay_microseconds must be an integer > 3
+    float num_steps, delay_microseconds; 									          // num_steps must be an integer, delay_microseconds must be an integer > 3
     for (int i = 0; i < message.length(); i++) {
-      if (message.substring(i, i+1) == "/") { 							        // splits message string into num_steps, delay_microseconds
+      if (message.substring(i, i+1) == "/") {   							      // splits message string into num_steps, delay_microseconds
         num_steps = message.substring(0, i).toFloat();
         delay_microseconds = message.substring(i+1).toFloat();
         Serial.print("Number of steps: "); Serial.println(num_steps);
