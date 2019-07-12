@@ -25,6 +25,7 @@ void loop(){
         Serial.print("Delay: "); Serial.println(delay_microseconds);
         steps(num_steps,delay_microseconds);							          // passes in steps num_steps and delay_microseconds 
         break;
+        Serial.println("Hello World");
       }
     }
   }
