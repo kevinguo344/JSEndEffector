@@ -15,6 +15,8 @@
 #define BE 15
 #define BF 16
 
+int result = 0;
+
 void setup() {
   Serial.begin(115200);
   //setps up input pins
@@ -25,8 +27,10 @@ void setup() {
 }
 
 void loop() {
-  int result = readBin();
-  Serial.println(result);
+  if(readBin() != result){
+    result = readBin();
+    Serial.println(result);
+  }
 }
 
 int readBin(){

@@ -1,11 +1,15 @@
 #define STEP_PIN 9
 #define DIRECTION_PIN 10
-#define STEPS_PER_TURN 800
+#define ENDSTOP_BACK_PIN 11
+
+#define SWITCH_ON 0
+#define SWITCH_OFF 1
 
 void setup(){
   Serial.begin(115200);
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIRECTION_PIN, OUTPUT);
+  pinMode(ENDSTOP_BACK_PIN, INPUT);
 }
 
 void loop(){
@@ -22,7 +26,6 @@ void loop(){
         Serial.print("Delay: "); Serial.println(delay_microseconds);
         steps(num_steps,delay_microseconds);							          // passes in steps num_steps and delay_microseconds 
         break;
-        Serial.println("Hello World");
       }
     }
   }
@@ -43,10 +46,15 @@ void steps(float numSteps, float delayMs){
   start_time = millis();
   if(delayMs < 5){ delayMs = 5; }										                // makes any delay less than 5 us to 5 us
   if(numSteps < 0){ isForward = false; numSteps = -numSteps; }			// checks whether to step forward or backwards
-  for(float i = 0; i < numSteps; i++){									              // does the steps
-    //if(i == numSteps-1) {Serial.print("Step: "); Serial.println(i);}
-    step(isForward, delayMs);
-    delayMicroseconds(100);
+  for(float i = 0; i < numSteps; i++){									            // does the steps
+    if(!isForward && digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){  // if the motor moves backwards and the switch isn't on, do the steps
+      step(isForward, delayMs);
+      delayMicroseconds(100);
+    }
+    else if(isForward){
+      step(isForward, delayMs);
+      delayMicroseconds(100);
+    }
   }
   end_time = millis();
   Serial.print("Number of steps: "); Serial.println(numSteps);
