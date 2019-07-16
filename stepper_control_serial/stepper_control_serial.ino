@@ -55,6 +55,9 @@ void steps(float numSteps, float delayMs){
       step(isForward, delayMs);
       delayMicroseconds(100);
     }
+    else if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_ON){
+      Serial.println("ENDSTOP ACTIVATED");  
+    }
   }
   end_time = millis();
   Serial.print("Number of steps: "); Serial.println(numSteps);
