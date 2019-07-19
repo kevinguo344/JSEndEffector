@@ -1,19 +1,19 @@
-#define B0 1
-#define B1 2
-#define B2 3
-#define B3 4
-#define B4 5
-#define B5 6
-#define B6 7
-#define B7 8
-#define B8 9
-#define B9 10
-#define BA 11
-#define BB 12
-#define BC 13
-#define BD 14
-#define BE 15
-#define BF 16
+#define B0 22
+#define B1 24
+#define B2 26
+#define B3 28
+#define B4 30
+#define B5 32
+#define B6 34
+#define B7 36
+#define B8 38
+#define B9 40
+#define BA 42
+#define BB 44
+#define BC 46
+#define BD 48
+#define BE 50
+#define BF 52
 
 int result = 0;
 
@@ -31,6 +31,7 @@ void loop() {
     result = readBin();
     Serial.println(result);
   }
+  delay(500);
 }
 
 int readBin(){
