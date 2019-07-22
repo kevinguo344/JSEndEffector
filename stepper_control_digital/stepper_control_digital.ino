@@ -7,6 +7,11 @@
 
 #define BITS 16
 
+#include <Wire.h>
+#include <VL6180X.h>
+
+VL6180X sensor;
+
 const int digital_pins[] = {22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52};
 const int bit_values[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,-1};
 
@@ -17,9 +22,14 @@ void setup(){
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIRECTION_PIN, OUTPUT);
   pinMode(ENDSTOP_BACK_PIN, INPUT);
-
+  Wire.begin();
+  
   //setps up input pins
   for(int i = 0; i < BITS; i++){ pinMode(digital_pins[i], INPUT); }
+
+  sensor.init();
+  sensor.configureDefault();
+  sensor.setTimeout(500);
 }
 
 void loop(){
@@ -30,6 +40,8 @@ void loop(){
     Serial.print("Steps: "); Serial.print(num_steps); Serial.print("/"); Serial.println(pulse_width);
     num_steps = 0; pulse_width = 0;
   }
+  sensor.readRangeSingleMillimeters();
+  
 }
 
 void step(bool forward, float pulseWidth){
