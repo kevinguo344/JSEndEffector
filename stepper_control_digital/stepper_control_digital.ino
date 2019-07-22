@@ -5,24 +5,12 @@
 #define SWITCH_ON 0
 #define SWITCH_OFF 1
 
-#define B0 22
-#define B1 24
-#define B2 26
-#define B3 28
-#define B4 30
-#define B5 32
-#define B6 34
-#define B7 36
-#define B8 38
-#define B9 40
-#define BA 42
-#define BB 44
-#define BC 46
-#define BD 48
-#define BE 50
-#define BF 52
+#define BITS 16
 
-int num_steps = 0; int pulse_width = 0;
+const int digital_pins[] = {22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52};
+const int bit_values[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,-1};
+
+int num_steps = 0; int pulse_width = 0; int prev_input = 0;
 
 void setup(){
   Serial.begin(115200);
@@ -31,19 +19,14 @@ void setup(){
   pinMode(ENDSTOP_BACK_PIN, INPUT);
 
   //setps up input pins
-  pinMode(B0, INPUT); pinMode(B1, INPUT); pinMode(B2, INPUT); pinMode(B3, INPUT);
-  pinMode(B4, INPUT); pinMode(B5, INPUT); pinMode(B6, INPUT); pinMode(B7, INPUT);
-  pinMode(B8, INPUT); pinMode(B9, INPUT); pinMode(BA, INPUT); pinMode(BB, INPUT);
-  pinMode(BC, INPUT); pinMode(BD, INPUT); pinMode(BE, INPUT); pinMode(BF, INPUT);
+  for(int i = 0; i < BITS; i++){ pinMode(digital_pins[i], INPUT); }
 }
 
 void loop(){
   // SEQUENCE: NUMBER OF STEPS, -1, PULSE_WIDTH
-  if(readBin() != 0 && num_steps == 0){                                               // checks if there's a Serial message
-    num_steps = readBin();
-  }
-  if(readBin() != 0 && readBin() != 1){
-    pulse_width = readBin();
+  if(readBinary() != 0 && num_steps == 0){ num_steps = readBinary(); }
+  if(readBinary() != 0 && readBinary() != 1){
+    pulse_width = readBinary();
     Serial.print("Steps: "); Serial.print(num_steps); Serial.print("/"); Serial.println(pulse_width);
     num_steps = 0; pulse_width = 0;
   }
@@ -62,7 +45,7 @@ void steps(float numSteps, float pulseWidth){
   bool isForward = true;
   unsigned long start_time, end_time;
   start_time = millis();
-  if(pulseWidth < 5){ pulseWidth = 5; }                                   // makes any delay less than 5 us to 5 us
+  if(pulseWidth < 5){ pulseWidth = 5; }                             // makes any delay less than 5 us to 5 us
   if(numSteps < 0){ isForward = false; numSteps = -numSteps; }      // checks whether to step forward or backwards
   for(float i = 0; i < numSteps; i++){                              // does the steps
     if(!isForward && digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){  // if the motor moves backwards and the switch isn't on, do the steps
@@ -87,15 +70,11 @@ void steps(float numSteps, float pulseWidth){
   Serial.print("Error: "); Serial.println(elapsed_time - est_time);
 }
 
-int readBin(){
+int readBinary(){
   int sum = 0;
-  sum += digitalRead(B0) * 1; sum += digitalRead(B1) * 2; sum += digitalRead(B2) * 4; sum += digitalRead(B3) * 8;
-  sum += digitalRead(B4) * 16; sum += digitalRead(B5) * 32; sum += digitalRead(B6) * 64;
-  sum += digitalRead(B7) * 128; sum += digitalRead(B8) * 256; sum += digitalRead(B9) * 512;
-  sum += digitalRead(BA) * 1024; sum += digitalRead(BB) * 2048; sum += digitalRead(BC) * 4096; sum += digitalRead(BD) * 8192;
-  sum += digitalRead(BE) * 16384;
-
-  // if BF is HIGH, number is positive
-  if (digitalRead(BF) == 0){ sum *= -1; }
+  for(int i=0;i < BITS-1,i++){
+    if(digitalRead(digital_pins[i]) == HIGH){ sum += bit_values[i]; }
+  }
+  if (digitalRead(digital_pins[BITS-1]) == 0){ sum *= -1; }
   return sum;
 }
