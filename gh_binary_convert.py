@@ -1,10 +1,17 @@
+"""Provides a scripting component.
+    Inputs:
+        x: The x script variable
+        y: The y script variable
+    Output:
+        a: The a output variable"""
+
+__author__ = "user"
+__version__ = "2019.07.22"
+
 import rhinoscriptsyntax as rs
-
-
-
 BITS = 16
-def interpret(x):
-	output = []
+def interpret(number):
+	output = [None] * BITS
 	is_negative = False
 
 	if number < 0:
@@ -17,8 +24,10 @@ def interpret(x):
 		output[i] = int(binary[i])
 
 	if is_negative:
-		output[BITS] = 0
+		output[BITS-1] = 0
 	else:
-		output[BITS] = 1
+		output[BITS-1] = 1
 
 	return output
+
+a = interpret(int(x))
