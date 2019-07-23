@@ -20,21 +20,22 @@ def interpretChunks(number):
 	# splits the number into chunks
 	if number > 32767:
 		num_chunks = int(number / 32767)
-		for i = range(num_chunks):
+		for i in range(num_chunks):
 			chunks.append(32767)
 		if number % 32767 > 0:
 			chunks.append(number % 32767)
 			num_chunks += 1
 	elif number < -32768:
 		num_chunks = int(number / -32768)
-		for i = range(num_chunks):
+		for i in range(num_chunks):
 			chunks.append(-32768)
 		if number % -32768 < 0:
 			chunks.append(number % -32768)
 			num_chunks += 1
 
 	for i in range(num_chunks):
-		n = interpret()
+		output.append(interpret(chunks[i]))
+
 	return output
 
 def interpret(num):
