@@ -8,7 +8,6 @@
 __author__ = "user"
 __version__ = "2019.07.22"
 
-import rhinoscriptsyntax as rs
 BITS = 16
 def interpret(number):
 	output = [None] * BITS
