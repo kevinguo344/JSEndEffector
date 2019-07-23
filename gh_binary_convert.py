@@ -1,5 +1,7 @@
 import rhinoscriptsyntax as rs
 
+
+
 BITS = 16
 def interpret(x):
 	output = []
@@ -7,7 +9,7 @@ def interpret(x):
 
 	if number < 0:
 		is_negative = True
-		number = -1 * number
+		number = abs(number)
 
 	binary = bin(number)[2:].zfill(BITS-1)
 
