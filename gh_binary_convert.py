@@ -1,14 +1,12 @@
 """Provides a scripting component.
     Inputs:
         x: The x script variable
-        y: The y script variable
     Output:
         a: The a output variable"""
 
 __author__ = "user"
-__version__ = "2019.07.22"
+__version__ = "2019.07.23"
 
-import rhinoscriptsyntax as rs
 BITS = 16
 def interpret(number):
 	output = [None] * BITS
@@ -20,14 +18,15 @@ def interpret(number):
 
 	binary = bin(number)[2:].zfill(BITS-1)
 
-	for i in range(BITS-1):
-		output[i] = int(binary[i])
-
+	for i in range(BITS-2,-1,-1):
+		if int(binary[i]) == 1:
+			output[BITS-2-i] = True
+		else:
+			output[BITS-2-i] = False
 	if is_negative:
-		output[BITS-1] = 0
+		output[BITS-1] = False
 	else:
-		output[BITS-1] = 1
-
+		output[BITS-1] = True
 	return output
 
 a = interpret(int(x))
