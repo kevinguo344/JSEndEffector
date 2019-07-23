@@ -4,7 +4,7 @@
     Output:
         a: The a output variable"""
 
-__author__ = "user"
+__author__ = "Kevin Guo"
 __version__ = "2019.07.23"
 
 BITS = 16
