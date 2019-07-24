@@ -11,7 +11,6 @@ BITS = 16
 def interpretChunks(number):
 	# sets up default values of variables
 	num_chunks = 1
-	is_negative = False
 
 	chunks = []
 	output = []
@@ -39,6 +38,9 @@ def interpretChunks(number):
 	return output
 
 def interpret(num):
+	out = []
+	is_negative = False
+
 	if num < 0:
 		is_negative = True
 		num = abs(num)
@@ -47,13 +49,13 @@ def interpret(num):
 
 	for i in range(BITS-2,-1,-1):
 		if int(binary[i]) == 1:
-			output[BITS-2-i] = True
+			out[BITS-2-i] = True
 		else:
-			output[BITS-2-i] = False
+			out[BITS-2-i] = False
 	if is_negative:
-		output[BITS-1] = False
+		out[BITS-1] = False
 	else:
-		output[BITS-1] = True
-	return output
+		out[BITS-1] = True
+	return out
 
 a = interpret(int(x))
