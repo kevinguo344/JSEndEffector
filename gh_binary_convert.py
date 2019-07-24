@@ -1,44 +1,47 @@
 """Provides a scripting component.
     Inputs:
-        x: The x script variable
+        x: The integer input variable
     Output:
-        a: The a output variable"""
+        bool_list: The boolean output variable
+        num_chunks: The integer output variable"""
 
 __author__ = "Kevin Guo"
-__version__ = "2019.07.23"
+__version__ = "2019.07.24"
 
 BITS = 16
 def interpretChunks(number):
 	# sets up default values of variables
-	num_chunks = 1
-
+	chunk_amount = 1
 	chunks = []
-	output = []
-	num_chunks = []
 
 	# splits the number into chunks
 	if number > 32767:
-		num_chunks = int(number / 32767)
-		for i in range(num_chunks):
+		chunk_amount = int(number / 32767)
+		for i in range(chunk_amount):
 			chunks.append(32767)
 		if number % 32767 > 0:
 			chunks.append(number % 32767)
-			num_chunks += 1
+			chunk_amount += 1
 	elif number < -32768:
-		num_chunks = int(number / -32768)
-		for i in range(num_chunks):
+		chunk_amount = int(number / -32768)
+		for i in range(chunk_amount):
 			chunks.append(-32768)
 		if number % -32768 < 0:
 			chunks.append(number % -32768)
-			num_chunks += 1
+			chunk_amount += 1
+	else:
+		chunks.append(number)
 
-	for i in range(num_chunks):
-		output.append(interpret(chunks[i]))
+	output = []
 
-	return output
+	for i in range(chunk_amount):
+		output.extend(interpret(chunks[i]))
+
+	print(output)
+	return output,chunk_amount
 
 def interpret(num):
-	out = []
+	out = [None] * BITS
 	is_negative = False
 
 	if num < 0:
@@ -58,4 +61,4 @@ def interpret(num):
 		out[BITS-1] = True
 	return out
 
-a = interpret(int(x))
+bool_list,num_chunks = interpretChunks(int(x))
