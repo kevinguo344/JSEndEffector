@@ -1,3 +1,8 @@
+#include <Wire.h>
+#include <VL6180X.h>
+
+VL6180X sensor;
+
 #define STEP_PIN 9
 #define DIRECTION_PIN 10
 #define ENDSTOP_BACK_PIN 11
@@ -10,6 +15,12 @@ void setup(){
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIRECTION_PIN, OUTPUT);
   pinMode(ENDSTOP_BACK_PIN, INPUT);
+  Wire.begin();
+
+  sensor.init();
+  sensor.configureDefault();
+  sensor.setScaling(3);
+  sensor.setTimeout(500);
 }
 
 void loop(){
@@ -51,12 +62,15 @@ void steps(float numSteps, float delayMs){
       step(isForward, delayMs);
       delayMicroseconds(100);
     }
-    else if(isForward){
+    else if(isForward && sensor.readRangeSingleMillimeters() < 700){
       step(isForward, delayMs);
       delayMicroseconds(100);
     }
     else if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_ON){
       Serial.println("ENDSTOP ACTIVATED");  
+    }
+    else if(sensor.readRangeSingleMillimeters() > 700){
+      Serial.println("DISTANCE ACTIVATED");
     }
   }
   end_time = millis();
