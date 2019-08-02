@@ -31,7 +31,7 @@ void loop() {
     result = readBin();
     Serial.println(result);
   }
-  delay(500);
+  delay(50);
 }
 
 int readBin(){
