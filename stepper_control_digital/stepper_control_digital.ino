@@ -27,9 +27,9 @@ void setup(){
   //setps up input pins
   for(int i = 0; i < BITS; i++){ pinMode(digital_pins[i], INPUT); }
 
-  sensor.init();
-  sensor.configureDefault();
-  sensor.setTimeout(500);
+  //sensor.init();
+  //sensor.configureDefault();
+  //sensor.setTimeout(500);
 }
 
 void loop(){
