@@ -17,12 +17,19 @@ void setup(){
 
 void loop(){
   // SEQUENCE: NUMBER OF STEPS, -1, PULSE_WIDTH
+  /*for(int i=0; i<BITS-1; i++){
+      Serial.print(digitalRead(digital_pins[i]));
+      Serial.print(",");
+    }
+    Serial.println(digitalRead(digital_pins[BITS-1]));*/
   int curr_input = readBinary();
-  if(curr_input != prev_input){
+  /*if(curr_input != prev_input){
+    //Serial.println(curr_input)
+    prev_input = curr_input;/*
     int curr_time = millis();
-    if(curr_time-change_time > 600/* && inputs[6] == 537427968*/){ //inserts number if 6th array element is non-null
+    if(curr_time-change_time > 600/* && inputs[6] == 537427968){ //inserts number if 6th array element is non-null
       //Serial.print("Input: "); Serial.print(prev_input); Serial.print("\t Time:"); Serial.println(curr_time-change_time);
-      for(int i = 0; i < 5; i++){
+      /*for(int i = 0; i < 5; i++){
         if(inputs[i] == 537427968){
           inputs[i] = prev_input;
           break;
@@ -30,6 +37,10 @@ void loop(){
       }
       prev_input = curr_input;
       change_time = curr_time;
+      for(int i = 0; i < 5; i++){
+        Serial.println(inputs[i]);
+      }
+      Serial.println("--------");
     }
     if (prev_input == 0 && inputs[4] != 537427968){
       Serial.println("------START NEW TRANSMISSION------");
@@ -38,7 +49,7 @@ void loop(){
         inputs[i] = 537427968;
       }
     }
-  }
+  }*/
   /**/
   /*int curr_input = readBinary();
   if (curr_input != prev_input){ change_time = millis(); }
@@ -50,8 +61,15 @@ void loop(){
 int readBinary(){
   int sum = 0;
   for(int i=0; i<BITS-1; i++){
-    if(digitalRead(digital_pins[i]) == HIGH){ sum += bit_values[i]; }
+    if(digitalRead(digital_pins[i]) == 1){
+      Serial.print("Pin "); Serial.print(i+1); Serial.println(" is HIGH");
+      sum += bit_values[i];
+    }
   }
-  if (digitalRead(digital_pins[BITS-1]) == 0){ sum *= -1; }
+  if (digitalRead(digital_pins[BITS-1]) == 0){
+    sum *= -1;
+    Serial.println("Pin 16 is LOW");
+  }
+  Serial.println("---------");
   return sum;
 }

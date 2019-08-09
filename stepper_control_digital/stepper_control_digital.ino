@@ -20,16 +20,15 @@ int inputs[] = {537427968, 537427968, 537427968, 537427968, 537427968};
 
 void setup(){
   Serial.begin(115200);
-  pinMode(STEP_PIN, OUTPUT);
-  pinMode(DIRECTION_PIN, OUTPUT);
-  pinMode(ENDSTOP_BACK_PIN, INPUT);
+  //pinMode(STEP_PIN, OUTPUT);
+  //pinMode(DIRECTION_PIN, OUTPUT);
 
   for(int i = 0; i < BITS; i++){ pinMode(digital_pins[i], INPUT); }
 }
 
 void loop(){
   int curr_input = readBinary();
-  if(curr_input != prev_input){
+  if(curr_input != prev_input ){
     int curr_time = millis();
     if(curr_time-change_time > 600){
       for(int i = 0; i < 5; i++){
@@ -40,10 +39,14 @@ void loop(){
       }
       prev_input = curr_input;
       change_time = curr_time;
+      for(int i = 0; i < 5; i++){
+        Serial.println(inputs[i]);
+      }
+      Serial.println("--------");
     }
     if (prev_input == 0 && inputs[4] != 537427968){
       Serial.print("Steps: "); Serial.print(inputs[2]); Serial.print("\tPulse Width: "); Serial.println(inputs[4]);
-      steps(inputs[2],inputs[4]);
+      //steps(inputs[2],inputs[4]);
       for(int i = 0; i < 5; i++){
         inputs[i] = 537427968;
       }
