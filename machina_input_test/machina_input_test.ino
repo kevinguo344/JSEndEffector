@@ -60,16 +60,19 @@ void loop(){
 }
 int readBinary(){
   int sum = 0;
+  int signals[BITS];
   for(int i=0; i<BITS-1; i++){
-    if(digitalRead(digital_pins[i]) == 1){
-      Serial.print("Pin "); Serial.print(i+1); Serial.println(" is HIGH");
-      sum += bit_values[i];
-    }
+    int reading = digitalRead(digital_pins[i]);
+    if(reading == HIGH){ sum += bit_values[i]; }
+    signals[i] = reading;
   }
-  if (digitalRead(digital_pins[BITS-1]) == 0){
-    sum *= -1;
-    Serial.println("Pin 16 is LOW");
+  int sign = digitalRead(digital_pins[BITS-1]);
+  signals[BITS-1] = sign;
+  if (sign == 0){ sum *= -1; }
+  Serial.print("Reading: ");
+  for(int i = 0; i < BITS; i++){
+    Serial.print(signals[i]); Serial.print(",");
   }
-  Serial.println("---------");
+  Serial.println("");
   return sum;
 }
