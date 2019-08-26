@@ -22,7 +22,18 @@ void loop(){
       Serial.print(",");
     }
     Serial.println(digitalRead(digital_pins[BITS-1]));*/
-  int curr_input = readBinary();
+  int curr_input[BITS+1];
+  readBinary(curr_input);
+  if (curr_input[BITS] != prev_input){
+    Serial.print("Reading: ");
+    for(int i = 0; i < BITS; i++){
+      Serial.print(curr_input[i]); Serial.print(",");
+    }
+    Serial.println("");
+    Serial.println(curr_input[BITS]);
+    prev_input = curr_input[BITS];
+  }
+  
   /*if(curr_input != prev_input){
     //Serial.println(curr_input)
     prev_input = curr_input;/*
@@ -58,9 +69,8 @@ void loop(){
     prev_input = curr_input;
   }*/
 }
-int readBinary(){
+int readBinary(int * signals){
   int sum = 0;
-  int signals[BITS];
   for(int i=0; i<BITS-1; i++){
     int reading = digitalRead(digital_pins[i]);
     if(reading == HIGH){ sum += bit_values[i]; }
@@ -69,10 +79,5 @@ int readBinary(){
   int sign = digitalRead(digital_pins[BITS-1]);
   signals[BITS-1] = sign;
   if (sign == 0){ sum *= -1; }
-  Serial.print("Reading: ");
-  for(int i = 0; i < BITS; i++){
-    Serial.print(signals[i]); Serial.print(",");
-  }
-  Serial.println("");
-  return sum;
+  signals[BITS] = sum;
 }
