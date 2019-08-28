@@ -1,13 +1,14 @@
 #define BITS 16
-#define MIN_DELAY 10
+#define MIN_DELAY 400
+#define EMPTY 537427968
 
 const int digital_pins[] = {22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52};
 const int bit_values[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,-1};
 
 int num_steps = 0, pulse_width = 0, prev_input = 0;
-int last_change = 0;
+int change_time = 0;
 
-int inputs[] = {537427968, 537427968, 537427968, 537427968, 537427968};
+int inputs[] = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
 void setup(){
   Serial.begin(115200);
@@ -20,25 +21,22 @@ void loop(){
   int curr_input[BITS+1];
   readBinary(curr_input);
   if (curr_input[BITS] != prev_input){
-    int curr_time = millis();
-    if(curr_time - last_change > 500){
-      if(prev_input == 0){
-        num_steps = curr_input[BITS];
-        Serial.print("Number of Steps: "); Serial.println(num_steps);
+    int this_change = millis();
+    if(this_change - change_time > MIN_DELAY){
+      for(int i = 0; i < 4; i++){
+        if(inputs[i] == EMPTY){
+          inputs[i] = prev_input;
+          break;
+        }
       }
-      if(prev_input == -1){
-        pulse_width = curr_input[BITS];
-        Serial.print("Pulse Width: "); Serial.println(pulse_width);
-      }
-      prev_input = curr_input[BITS];
     }
-    last_change = curr_time;
-    Serial.print("Reading: ");
-    for(int i = 0; i < BITS; i++){
-      Serial.print(curr_input[i]); Serial.print(",");
-    }
-    Serial.println("");
-    Serial.println(curr_input[BITS]);
+    change_time = this_change;
+    prev_input = curr_input[BITS];
+  }
+  if(inputs[3] != EMPTY){
+    Serial.print("Steps: "); Serial.println(inputs[1]);
+    Serial.print("Pulse Width: "); Serial.println(inputs[3]);
+    for(int i = 0; i < 4; i++){ inputs[i] = EMPTY; }
   }
 }
 int readBinary(int * signals){
