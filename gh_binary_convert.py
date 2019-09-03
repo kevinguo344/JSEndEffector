@@ -10,19 +10,18 @@ __author__ = "Kevin Guo"
 __version__ = "2019.07.26"
 
 BITS = 16
-DELIMITER = -1
 OFF = 0
+DELIMITER = -1
 
 #assumes pulse width will never overflow
 
 def createCommands(stps,pulse):
     chunk_number = 0
     final_outputs = []
-
     cmd_list_steps,num_chunks_steps = interpretChunks(stps)
     cmd_list_delimeter = interpret(DELIMITER)
     cmd_list_pulse = interpret(pulse)
-    cmd_list_off = interpret(OFF)\
+    cmd_list_off = interpret(OFF)
 
     for i in range(num_chunks_steps):
         # adds step commands to outputs
