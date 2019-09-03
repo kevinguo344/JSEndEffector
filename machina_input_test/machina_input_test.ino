@@ -55,7 +55,6 @@ int readBinary(int * signals){
 
 // READS INPUT BUFFER TO FIND INPUTS
 void readBuffer(){
-  
   boolean isDelimeter = false;
   int delimeter_ind = 0;
   Serial.println("----------------------");
@@ -79,6 +78,7 @@ void readBuffer(){
   }
 }
 
+// EMPTIES OUT INPUT BUFFER TO GET NEW INPUTS
 void emptyBuffer(){
   for(int i = 0; i < BUFFER_SIZE; i++){
     inputs[i] = EMPTY;

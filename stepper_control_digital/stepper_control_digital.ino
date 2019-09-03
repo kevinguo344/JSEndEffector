@@ -1,9 +1,8 @@
-#define STEP_PIN 9
-#define DIRECTION_PIN 10
-
 #define BITS 16
-#define MIN_DELAY 500
+#define MIN_DELAY 300
 #define EMPTY 537427968
+#define BUFFER_SIZE 5
+#define DELIMETER -1
 
 const int digital_pins[] = {22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52};
 const int bit_values[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,-1};
@@ -12,6 +11,8 @@ int num_steps = 0, pulse_width = 0, prev_input = 0;
 int change_time = 0;
 
 int inputs[] = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
+
+int curr_input[BITS+1];
 
 void setup(){
   Serial.begin(115200);
@@ -23,7 +24,6 @@ void setup(){
 
 void loop(){
   // SEQUENCE: NUMBER OF STEPS, -1, PULSE_WIDTH
-  int curr_input[BITS+1];
   readBinary(curr_input);
   if (curr_input[BITS] != prev_input){
     int this_change = millis();
@@ -37,14 +37,7 @@ void loop(){
     }
     change_time = this_change;
     prev_input = curr_input[BITS];
-  }
-  if(inputs[3] != EMPTY){
-    for(int i = 0; i < 4; i++){ Serial.println(inputs[i]); }
-    
-    Serial.print("Steps: "); Serial.println(inputs[1]); num_steps = inputs[1];
-    Serial.print("Pulse Width: "); Serial.println(inputs[3]); pulse_width = inputs[3];
-    steps(num_steps,pulse_width);                        // passes in steps num_steps and delay_microseconds 
-    for(int i = 0; i < 4; i++){ inputs[i] = EMPTY; }
+    readBuffer();
   }
 }
 
@@ -81,6 +74,7 @@ void steps(float numSteps, float pulseWidth){
   end_time = millis();
 }
 
+// READS INPUT SIGNALS AS BINARY NUMBERS
 int readBinary(int * signals){
   int sum = 0;
   for(int i=0; i<BITS-1; i++){
@@ -92,4 +86,40 @@ int readBinary(int * signals){
   signals[BITS-1] = sign;
   if (sign == 0){ sum *= -1; }
   signals[BITS] = sum;
+}
+
+// READS INPUT BUFFER TO FIND INPUTS
+void readBuffer(){
+  boolean isDelimeter = false;
+  int delimeter_ind = 0;
+  Serial.println("----------------------");
+  for(int i = 0; i < BUFFER_SIZE; i++){
+    Serial.println(inputs[i]);
+    if(inputs[i] == -1){
+      isDelimeter = true;
+      delimeter_ind = i;
+    }
+  }
+  Serial.println("----------------------");
+  if(isDelimeter && delimeter_ind != 0 && delimeter_ind != BUFFER_SIZE-1){
+    num_steps = inputs[delimeter_ind-1];
+    pulse_width = inputs[delimeter_ind+1];
+    if(num_steps != 0 && pulse_width != 0 && num_steps != EMPTY && pulse_width != EMPTY){
+      Serial.println("---------Input Found---------");
+      Serial.print("Steps:\t"); Serial.println(num_steps);
+      Serial.print("Pulse Width:\t"); Serial.println(pulse_width);
+      if(pulse_width < 0){ pulse_width = abs(pulse_width); }
+      if(pulse_width < 5){ pulse_width = 5; }
+      steps(num_steps, pulse_width);
+      emptyBuffer();
+    }
+  }
+}
+
+// EMPTIES OUT INPUT BUFFER TO GET NEW INPUTS
+void emptyBuffer(){
+  for(int i = 0; i < BUFFER_SIZE; i++){
+    inputs[i] = EMPTY;
+  }
+  num_steps = 0; pulse_width = 0;
 }
