@@ -48,12 +48,12 @@ def interpretChunks(number):
         if number % 32767 > 0:
             chunks.append(number % 32767)
             chunk_amount += 1
-    elif number < -32768:
-        chunk_amount = int(number / -32768)
+    elif number < -16384:
+        chunk_amount = int(number / -16384)
         for i in range(chunk_amount):
-            chunks.append(-32768)
-        if number % -32768 < 0:
-            chunks.append(number % -32768)
+            chunks.append(-16384)
+        if number % -16384 < 0:
+            chunks.append(number % -16384)
             chunk_amount += 1
     else:
         chunks.append(number)
