@@ -1,14 +1,16 @@
 #define BITS 16
-#define MIN_DELAY 300
+#define MIN_DELAY 400
 #define EMPTY 537427968
 #define BUFFER_SIZE 5
 #define DELIMETER -1
 
+#define STEP_PIN 9
+#define DIRECTION_PIN 10
+
 const int digital_pins[] = {22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52};
 const int bit_values[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,-1};
 
-int num_steps = 0, pulse_width = 0, prev_input = 0;
-int change_time = 0;
+int num_steps = 0, pulse_width = 0, prev_input = 0, change_time = 0, prev_inserted_input = 0;
 
 int inputs[] = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
@@ -28,10 +30,14 @@ void loop(){
   if (curr_input[BITS] != prev_input){
     int this_change = millis();
     if(this_change - change_time > MIN_DELAY){
-      for(int i = 0; i < 4; i++){
-        if(inputs[i] == EMPTY){
-          inputs[i] = prev_input;
-          break;
+      if(prev_input != prev_inserted_input){
+        Serial.print("New Input: "); Serial.print(prev_input); Serial.print("\tElapsed Time: "); Serial.println(this_change - change_time);
+        for(int i = 0; i < BUFFER_SIZE; i++){
+          if(inputs[i] == EMPTY){
+            inputs[i] = prev_input;
+            prev_inserted_input = inputs[i];
+            break;
+          }
         }
       }
     }
@@ -114,10 +120,14 @@ void readBuffer(){
       emptyBuffer();
     }
   }
+  else if(inputs[BUFFER_SIZE-1] != EMPTY){
+    emptyBuffer();
+  }
 }
 
 // EMPTIES OUT INPUT BUFFER TO GET NEW INPUTS
 void emptyBuffer(){
+  Serial.println("Emptying Buffer");
   for(int i = 0; i < BUFFER_SIZE; i++){
     inputs[i] = EMPTY;
   }
