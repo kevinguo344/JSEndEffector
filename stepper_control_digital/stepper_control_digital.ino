@@ -32,6 +32,11 @@ void loop(){
     if(this_change - change_time > MIN_DELAY){
       if(prev_input != prev_inserted_input){
         Serial.print("New Input: "); Serial.print(prev_input); Serial.print("\tElapsed Time: "); Serial.println(this_change - change_time);
+        Serial.println("---------");
+        for(int i = 0; i < BUFFER_SIZE; i++){
+          Serial.println(inputs[i]);
+        }
+        Serial.println("---------");
         for(int i = 0; i < BUFFER_SIZE; i++){
           if(inputs[i] == EMPTY){
             inputs[i] = prev_input;
@@ -98,15 +103,13 @@ int readBinary(int * signals){
 void readBuffer(){
   boolean isDelimeter = false;
   int delimeter_ind = 0;
-  Serial.println("----------------------");
   for(int i = 0; i < BUFFER_SIZE; i++){
-    Serial.println(inputs[i]);
+    //Serial.println(inputs[i]);
     if(inputs[i] == -1){
       isDelimeter = true;
       delimeter_ind = i;
     }
   }
-  Serial.println("----------------------");
   if(isDelimeter && delimeter_ind != 0 && delimeter_ind != BUFFER_SIZE-1){
     num_steps = inputs[delimeter_ind-1];
     pulse_width = inputs[delimeter_ind+1];
