@@ -4,7 +4,7 @@
 #define BUFFER_SIZE 5
 #define DELIMETER -1
 
-const int digital_pins[] = {22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52};
+const int digital_pins[] = {22,24,26,28,30,32,34,36,23,25,27,29,31,33,35,37};
 const int bit_values[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,-1};
 
 int num_steps = 0, pulse_width = 0, prev_input = 0;
