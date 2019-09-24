@@ -1,5 +1,5 @@
 #define BITS 16
-#define MIN_DELAY 500
+#define MIN_DELAY 200
 #define EMPTY 537427968
 #define BUFFER_SIZE 5
 #define DELIMETER -1
@@ -29,7 +29,7 @@ void loop(){
   readBinary(curr_input);
   if (curr_input[BITS] != prev_input){
     int this_change = millis();
-    if(millis() - change_time > MIN_DELAY){
+    if(this_change - change_time > MIN_DELAY){
       if(prev_input != prev_inserted_input){
         Serial.print("New Input: "); Serial.print(prev_input); Serial.print("\tElapsed Time: "); Serial.println(this_change - change_time);
         Serial.println("---------");
@@ -55,35 +55,22 @@ void loop(){
 void step(bool forward, float pulseWidth){
   // does a step
   if(forward){ digitalWrite(DIRECTION_PIN, HIGH); }                 // changes direction of motor depending if steps negative or positive
-  else{ digitalWrite(DIRECTION_PIN, LOW); }               
+  else{ digitalWrite(DIRECTION_PIN, LOW); }
+  delayMicroseconds(20);
   digitalWrite(STEP_PIN, HIGH);                                     // starts pulse by setting step pin to high 
   delayMicroseconds(abs(pulseWidth));                                    // delay must be greater than 3 us according to Arduino docs
   digitalWrite(STEP_PIN, LOW);                                      // finishes pulse by going to low
-  delayMicroseconds(1000);
+  delayMicroseconds(100);
 }
 
 void steps(float numSteps, float pulseWidth){
   bool isForward = true;
   unsigned long start_time, end_time;
-  start_time = millis();
   if(pulseWidth < 5){ pulseWidth = 5; }                             // makes any delay less than 5 us to 5 us
   if(numSteps < 0){ isForward = false; numSteps = -numSteps; }      // checks whether to step forward or backwards
   for(float i = 0; i < numSteps; i++){                              // does the steps
     step(isForward, pulseWidth);
-/*
-    if(!isForward && digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){  // if the motor moves backwards and the switch isn't on, do the steps
-      step(isForward, pulseWidth);
-      delayMicroseconds(100);
-    }
-    else if(isForward){
-      step(isForward, pulseWidth);
-      delayMicroseconds(100);
-    }
-    else if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_ON){
-      Serial.println("ENDSTOP ACTIVATED");  
-    }*/
   }
-  end_time = millis();
 }
 
 // READS INPUT SIGNALS AS BINARY NUMBERS
@@ -119,7 +106,7 @@ void readBuffer(){
       Serial.print("Steps:\t"); Serial.println(num_steps);
       Serial.print("Pulse Width:\t"); Serial.println(pulse_width);
       if(pulse_width < 0){ pulse_width = abs(pulse_width); }
-      if(pulse_width < 5){ pulse_width = 5; }
+      if(pulse_width < 10){ pulse_width = 10; }
       steps(num_steps, pulse_width);
       emptyBuffer();
     }
@@ -132,8 +119,6 @@ void readBuffer(){
 // EMPTIES OUT INPUT BUFFER TO GET NEW INPUTS
 void emptyBuffer(){
   Serial.println("Emptying Buffer");
-  for(int i = 0; i < BUFFER_SIZE; i++){
-    inputs[i] = EMPTY;
-  }
+  for(int i = 0; i < BUFFER_SIZE; i++){ inputs[i] = EMPTY; }
   num_steps = 0; pulse_width = 0;
 }
