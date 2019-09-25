@@ -4,7 +4,10 @@
 #define ON_OFF_PIN 22
 #define DIR_INPUT_PIN 24
 
-#define PULSE_WIDTH 200
+#define PULSE_WIDTH 25
+
+bool curr_on_off;
+bool curr_dir;
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,6 +19,9 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if(digitalRead(ON_OFF_PIN)){
+    Serial.println("Stepper On");
+    if(digitalRead(DIR_INPUT_PIN)){ Serial.println("Forward"); }
+    else{ Serial.println("Backwards"); }
     step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
   }
 }
