@@ -1035,13 +1035,11 @@ MODULE Machina_Driver
     !
     ! A wildcard function for users to customize particular behavior
     PROC sendSerial(string str_cmd)
-
-      TPWrite "Writing Serial message through COM1";
-      VAR iodev channel;
-      
-      Open "com1:", channel\Bin;        ! Opens serial channel
-      WriteStrBin channel, str_cmd;     ! Sends serial message
-      Close channel;                    ! Closes serial channel
+        TPWrite "Writing Serial message through COM1";
+        VAR iodev channel;
+        Open "com1:", channel\Bin;        ! Opens serial channel
+        WriteStrBin channel, str_cmd;     ! Sends serial message
+        Close channel;                    ! Closes serial channel
     ENDPROC
 
 ENDMODULE
