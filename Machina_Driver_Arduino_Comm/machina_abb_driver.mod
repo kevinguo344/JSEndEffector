@@ -92,6 +92,8 @@ MODULE Machina_Driver
     CONST num INST_EXT_JOINTS_JOINTTARGET := 16;    ! (setextjoints a1 a2 a3 a4 a5 a6, applies only to robtarget)
     CONST num INST_CUSTOM_ACTION := 17;             ! This is a wildcard for custom user functions that do not really fit in the Machina API (mainly Yumi gripping right now)
 
+    CONST num INST_SERIAL_SEND := 42;				! For sending serial communications over COM 1 (VERY EXPERIMENTAL, NEEDS TO BE TESTED)
+
     CONST num INST_STOP_EXECUTION := 100;           ! Stops execution of the server module
     CONST num INST_GET_INFO := 101;                 ! A way to retreive state information from the server (not implemented)
     CONST num INST_SET_CONFIGURATION := 102;        ! A way to make some changes to the configuration of the server
@@ -290,8 +292,12 @@ MODULE Machina_Driver
                     TPWrite("Monitor update interval set to " + NumToStr(monitorUpdateInterval, 2) + " s.");
 
                 CASE INST_CUSTOM_ACTION:
-                    GetDataVal currentAction.s1, serial_command;
+                    CustomAction(action a);
+
+                CASE INST_SERIAL_SEND:
+                	GetDataVal currentAction.s1, serial_command;
                     SendSerial(serial_command);
+
                 ENDTEST
 
                 ! Send acknowledgement message
