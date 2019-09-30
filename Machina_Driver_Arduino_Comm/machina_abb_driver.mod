@@ -297,7 +297,6 @@ MODULE Machina_Driver
                 CASE INST_SERIAL_SEND:
                 	GetDataVal currentAction.s1, serial_command;
                     SendSerial(serial_command);
-
                 ENDTEST
 
                 ! Send acknowledgement message
