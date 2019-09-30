@@ -12,7 +12,7 @@ MODULE Machina_Driver
     ! waits for a TCP client, listens to a stream of formatted string messages,
     ! buffers them parsed into an 'action' struct, and runs a loop to execute them.
     !
-    ! IMPORTANT: make sure to adjust {{HOSTNAME}} and {{PORT}} to your current setup
+    ! IMPORTANT: make sure to adjust 192.168.125.1 and 7000 to your current setup
     !
     ! More info on https://github.com/RobotExMachina
     ! A project by https://github.com/garciadelcastillo
@@ -58,14 +58,14 @@ MODULE Machina_Driver
     ENDRECORD
 
     ! SERVER DATA --> to modify by user
-    PERS string SERVER_IP := "{{HOSTNAME}}";     ! Replace "127.0.0.1" with device IP, typically "192.168.125.1" if working with a real robot or "127.0.0.1" if testing a virtual one (RobotStudio)
-    CONST num SERVER_PORT := {{PORT}};           ! Replace 7000 with custom port number, like for example 7000
+    PERS string SERVER_IP := "192.168.125.1";     ! Replace "127.0.0.1" with device IP, typically "192.168.125.1" if working with a real robot or "127.0.0.1" if testing a virtual one (RobotStudio)
+    CONST num SERVER_PORT := 7000;           ! Replace 7000 with custom port number, like for example 7000
 
     ! Useful for handshakes and version compatibility checks...
     CONST string MACHINA_SERVER_VERSION := "1.4.1";
 
     ! Should program exit on any kind of error?
-    PERS bool USE_STRICT := TRUE;
+    PERS bool USE_STRICT := FALSE;
 
     ! TCP stuff
     LOCAL VAR string clientIp;
@@ -168,6 +168,7 @@ MODULE Machina_Driver
 
     ! Message to send over COM1 to Arduino board
     VAR string serial_command;
+    VAR iodev channel;
 
     ! SHARED WITH MONITOR MODULE
     ! If monitor module is available, these variables are shared and can be tweaked from this module.
@@ -290,7 +291,7 @@ MODULE Machina_Driver
 
                 CASE INST_CUSTOM_ACTION:
                     GetDataVal currentAction.s1, serial_command;
-                    sendSerial(serial_command);
+                    SendSerial(serial_command);
                 ENDTEST
 
                 ! Send acknowledgement message
@@ -662,6 +663,8 @@ MODULE Machina_Driver
         VAR num paramsPos := 1;
         VAR action a;
 
+        TPWrite "Message: " + st;
+
         ! Sanity
         len := StrLen(st);
         IF len < 2 THEN
@@ -680,7 +683,9 @@ MODULE Machina_Driver
             ENDIF
 
             s := StrPart(st, 2, nPos - 2);
+            TPWrite "s: " + s;
             ok := StrToVal(s, a.id);
+            TPWrite "ok: " + ValToStr(ok);
             IF NOT ok THEN
                 TPWrite "MACHINA ERROR: incorrectly formatted message:";
                 TPWrite st;
@@ -825,6 +830,8 @@ MODULE Machina_Driver
             ! Move to next arg
             argId := argId + 1;
         ENDIF
+
+        TPWrite "Argument ID: " + ValToStr(arguments{argId});
 
         ! Read instruction code
         ok := StrToVal(arguments{argId}, a.code);
@@ -1027,19 +1034,22 @@ MODULE Machina_Driver
     ENDPROC
 
 
-
+    PROC sendSerial(string str_cmd)
+        TPWrite "Writing Serial message: " + str_cmd + " through COM1";
+        Open "com1:", channel\Bin;        ! Opens serial channel
+        WriteStrBin channel, str_cmd;     ! Sends serial message
+        Close channel;                    ! Closes serial channel
+    ENDPROC
 
     !   __     _____ __        __         _____  __      __
     !  /  /  \(_  | /  \|\/|  |_ /  \|\ |/   | |/  \|\ |(_
     !  \__\__/__) | \__/|  |  |  \__/| \|\__ | |\__/| \|__)
     !
     ! A wildcard function for users to customize particular behavior
-    PROC sendSerial(string str_cmd)
-        TPWrite "Writing Serial message through COM1";
-        VAR iodev channel;
-        Open "com1:", channel\Bin;        ! Opens serial channel
-        WriteStrBin channel, str_cmd;     ! Sends serial message
-        Close channel;                    ! Closes serial channel
+    PROC CustomAction(action a)
+      ! Write your own behavior here...
+      TPWrite "Custom action request";
+      LogAction a;
     ENDPROC
 
 ENDMODULE
