@@ -92,7 +92,7 @@ MODULE Machina_Driver
     CONST num INST_EXT_JOINTS_JOINTTARGET := 16;    ! (setextjoints a1 a2 a3 a4 a5 a6, applies only to robtarget)
     CONST num INST_CUSTOM_ACTION := 17;             ! This is a wildcard for custom user functions that do not really fit in the Machina API (mainly Yumi gripping right now)
 
-    CONST num INST_SERIAL_SEND := 42;				! For sending serial communications over COM 1 (VERY EXPERIMENTAL, NEEDS TO BE TESTED)
+    CONST num INST_SERIAL_SEND := 42;               ! For sending serial communications over COM 1 (VERY EXPERIMENTAL, NEEDS TO BE TESTED)
 
     CONST num INST_STOP_EXECUTION := 100;           ! Stops execution of the server module
     CONST num INST_GET_INFO := 101;                 ! A way to retreive state information from the server (not implemented)
@@ -168,10 +168,6 @@ MODULE Machina_Driver
     ! Buffer of responses
     LOCAL VAR string response;
 
-    ! Message to send over COM1 to Arduino board
-    VAR string serial_command;
-    VAR iodev channel;
-
     ! SHARED WITH MONITOR MODULE
     ! If monitor module is available, these variables are shared and can be tweaked from this module.
     PERS num monitorUpdateInterval;                 ! Wait time in secs before next update. Is global variable so that it can be changed from Driver.
@@ -216,15 +212,8 @@ MODULE Machina_Driver
             ! Once the stream is flushed, execute all pending actions
             WHILE stopExecution = FALSE AND (actionPosExecute < actionPosWrite OR isActionPosWriteWrapped = TRUE) DO
                 currentAction := actions{actionPosExecute};
-                TPWrite "Action: " + ValToStr(currentAction);
-                
+
                 TEST currentAction.code
-                
-                CASE INST_SERIAL_SEND:
-                	GetDataVal ValToStr(currentAction.p1), serial_command;
-                    TPWrite "Writing Serial message: " + serial_command + " through COM1";
-                    SendSerial(serial_command);
-                
                 CASE INST_MOVEL:
                     cursorRobTarget := GetRobTarget(currentAction);
                     MoveL cursorRobTarget, cursorSpeed, cursorZone, cursorTool, \WObj:=cursorWObj;
@@ -301,6 +290,12 @@ MODULE Machina_Driver
                 CASE INST_CUSTOM_ACTION:
                     CustomAction currentAction;
 
+                CASE INST_SERIAL_SEND:
+                    TPWrite("Writing " + ValToStr(currentAction.p1));
+                    GetDataVal , serial_command;
+                    Open "com1:", channel\Bin;                          ! Opens serial channel
+                    WriteStrBin channel, ValToStr(currentAction.p1);    ! Sends serial message
+                    Close channel;                                      ! Closes serial channel
                 ENDTEST
 
                 ! Send acknowledgement message
@@ -1044,6 +1039,7 @@ MODULE Machina_Driver
 
 
     PROC SendSerial(string str_cmd)
+        TPWrite "Writing Serial message: " + str_cmd + " through COM1";
         Open "com1:", channel\Bin;        ! Opens serial channel
         WriteStrBin channel, str_cmd;     ! Sends serial message
         Close channel;                    ! Closes serial channel

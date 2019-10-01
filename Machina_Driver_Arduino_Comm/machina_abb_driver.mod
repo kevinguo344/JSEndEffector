@@ -168,10 +168,6 @@ MODULE Machina_Driver
     ! Buffer of responses
     LOCAL VAR string response;
 
-    ! Message to send over COM1 to Arduino board
-    VAR string serial_command;
-    VAR iodev channel;
-
     ! SHARED WITH MONITOR MODULE
     ! If monitor module is available, these variables are shared and can be tweaked from this module.
     PERS num monitorUpdateInterval;                 ! Wait time in secs before next update. Is global variable so that it can be changed from Driver.
@@ -295,8 +291,11 @@ MODULE Machina_Driver
                     CustomAction currentAction;
 
                 CASE INST_SERIAL_SEND:
-                	GetDataVal ValToStr(currentAction.p1), serial_command;
-                    SendSerial(serial_command);
+                	TPWrite("Writing " + ValToStr(currentAction.p1));
+                	GetDataVal , serial_command;
+                    Open "com1:", channel\Bin;        					! Opens serial channel
+			        WriteStrBin channel, ValToStr(currentAction.p1);	! Sends serial message
+			        Close channel;                    					! Closes serial channel
                 ENDTEST
 
                 ! Send acknowledgement message
