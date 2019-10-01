@@ -292,10 +292,10 @@ MODULE Machina_Driver
                     TPWrite("Monitor update interval set to " + NumToStr(monitorUpdateInterval, 2) + " s.");
 
                 CASE INST_CUSTOM_ACTION:
-                    CustomAction(action a);
+                    CustomAction currentAction;
 
                 CASE INST_SERIAL_SEND:
-                	GetDataVal currentAction.s1, serial_command;
+                	GetDataVal ValToStr(currentAction.p1), serial_command;
                     SendSerial(serial_command);
                 ENDTEST
 
@@ -1039,7 +1039,7 @@ MODULE Machina_Driver
     ENDPROC
 
 
-    PROC sendSerial(string str_cmd)
+    PROC SendSerial(string str_cmd)
         TPWrite "Writing Serial message: " + str_cmd + " through COM1";
         Open "com1:", channel\Bin;        ! Opens serial channel
         WriteStrBin channel, str_cmd;     ! Sends serial message
