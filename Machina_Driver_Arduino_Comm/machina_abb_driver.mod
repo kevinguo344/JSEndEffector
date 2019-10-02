@@ -173,7 +173,7 @@ MODULE Machina_Driver
     PERS num monitorUpdateInterval;                 ! Wait time in secs before next update. Is global variable so that it can be changed from Driver.
     PERS bool isMachinaDriverAvailable := TRUE;     ! Let the monitor know that the main task is running a valid Machina driver.
 
-
+    VAR iodev channel;
 
     !
     !  |\/| /\ ||\ |
@@ -292,7 +292,6 @@ MODULE Machina_Driver
 
                 CASE INST_SERIAL_SEND:
                 	TPWrite("Writing " + ValToStr(currentAction.p1));
-                	GetDataVal , serial_command;
                     Open "com1:", channel\Bin;        					! Opens serial channel
 			        WriteStrBin channel, ValToStr(currentAction.p1);	! Sends serial message
 			        Close channel;                    					! Closes serial channel

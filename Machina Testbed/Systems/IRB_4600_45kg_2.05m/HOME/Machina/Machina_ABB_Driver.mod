@@ -91,6 +91,8 @@ MODULE Machina_Driver
     CONST num INST_EXT_JOINTS_ROBTARGET := 15;      ! (setextjoints a1 a2 a3 a4 a5 a6, applies only to robtarget)
     CONST num INST_EXT_JOINTS_JOINTTARGET := 16;    ! (setextjoints a1 a2 a3 a4 a5 a6, applies only to robtarget)
     CONST num INST_CUSTOM_ACTION := 17;             ! This is a wildcard for custom user functions that do not really fit in the Machina API (mainly Yumi gripping right now)
+    CONST num INST_SERIAL_SEND := 42;				! For sending serial communications over COM 1 (VERY EXPERIMENTAL, NEEDS TO BE TESTED)
+
 
     CONST num INST_STOP_EXECUTION := 100;           ! Stops execution of the server module
     CONST num INST_GET_INFO := 101;                 ! A way to retreive state information from the server (not implemented)
@@ -172,7 +174,7 @@ MODULE Machina_Driver
     PERS num monitorUpdateInterval;                 ! Wait time in secs before next update. Is global variable so that it can be changed from Driver.
     PERS bool isMachinaDriverAvailable := TRUE;     ! Let the monitor know that the main task is running a valid Machina driver.
 
-
+    VAR iodev channel;
 
     !
     !  |\/| /\ ||\ |
