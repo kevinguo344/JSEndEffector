@@ -30,7 +30,7 @@ void setup() {
   Serial.begin(115200);
 
   // sets up mode for digital pins
-  pinMode(STEP_PIN, OUTPUT); pinMode(DIRECTION_PIN, OUTPUT); 
+  pinMode(STEP_PIN, OUTPUT); pinMode(DIRECTION_PIN, OUTPUT);
   pinMode(ON_OFF_PIN, INPUT); pinMode(DIR_INPUT_PIN, INPUT); pinMode(ENDSTOP_BACK_PIN, INPUT); pinMode(TYPE_START, INPUT);
 
   // sets up distance sensor
@@ -38,38 +38,40 @@ void setup() {
   sensor.init(); sensor.configureDefault();
   sensor.setScaling(3); sensor.setTimeout(500);
 
-  if(digitalRead(TYPE_START)){  retractPosition(); } // if clean start, retract extruder all the way
+  if(digitalRead(TYPE_START)){ retractPosition(); } // if clean start, retract extruder all the way
 }
 
 void loop() {
+  int curr_step = (int) dueFlashStorage.read(ADDRESS);
   if(digitalRead(ON_OFF_PIN)){
     Serial.println("Stepper On");
     if(digitalRead(DIR_INPUT_PIN)){
       // if the movement is forward, check the distance sensor/
-      if (sensor.readRangeSingleMillimeters() < 760){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
+      if (sensor.readRangeSingleMillimeters() < 760){
+        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
+        curr_step++;
+        Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
+      }
       else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
     }
     else{
       // if the movement is backwards, check the endstop sensor
-      if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
+      if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
+        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
+        curr_step--;
+        Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
+      }
       else{ Serial.println("ENDSTOP ACTIVATED"); }
     }
   }
+  dueFlashStorage.write(ADDRESS, (byte) curr_step);
 }
 
 void step(bool forward, float delayMs){
   // does a step
   // Step: |<------HIGH for Pulse Width (in microseconds)------>||<------ LOW for 100 microseconds)------>| 
-  int curr_step = (int) dueFlashStorage.read(ADDRESS);
-  if(forward){
-    digitalWrite(DIRECTION_PIN, HIGH);
-    curr_step++;
-  }
-  else{
-    digitalWrite(DIRECTION_PIN, LOW);
-    curr_step--;
-  }
-  dueFlashStorage.write(ADDRESS, (byte) curr_step);
+  if(forward){ digitalWrite(DIRECTION_PIN, HIGH); }
+  else{ digitalWrite(DIRECTION_PIN, LOW); }
   digitalWrite(STEP_PIN, HIGH);                                     // starts pulse by setting step pin to high 
   delayMicroseconds(delayMs);                                       // delay must be greater than 3 us according to Arduino docs
   digitalWrite(STEP_PIN, LOW);                                      // finishes pulse by going to low
