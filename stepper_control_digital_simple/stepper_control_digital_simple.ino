@@ -23,8 +23,11 @@ DueFlashStorage dueFlashStorage;
 #define SWITCH_OFF 1
 
 // Pulse Width constants
-#define PULSE_WIDTH 25
 #define RETRACT_PULSE_WIDTH 50
+int PULSE_WIDTH = 25;
+
+// if EMERGENCY_STOP is true, will not continue to move
+boolean EMERGENCY_STOP = false;
 
 void setup() {
   Serial.begin(115200);
@@ -43,10 +46,22 @@ void setup() {
 
 void loop() {
   int curr_step = (int) dueFlashStorage.read(ADDRESS);
-  if(digitalRead(ON_OFF_PIN)){
+  if(Serial.available()){
+    String message = Serial.readString();
+    Serial.print("Received: "); Serial.println(message);
+    
+    // Check whether it's a STOP or PULSE WIDTH message
+    if(message.chartAt(0) == 'S'){ EMERGENCY_STOP = !EMERGENCY_STOP; } // Turns EMERGENCY_STOP On or Off 
+    else if(!isnan(message.toFloat())){ // Changes pulse width
+      Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
+      PULSE_WIDTH = max(message.toFloat(), 5); // Makes sure that any new pulse width is at least 5 us
+    }
+    else{ Serial.println("Serial Message not understood"); }
+  }
+  if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
     Serial.println("Stepper On");
     if(digitalRead(DIR_INPUT_PIN)){
-      // if the movement is forward, check the distance sensor/
+      // if the movement is forward, check the distance sensor
       if (sensor.readRangeSingleMillimeters() < 760){
         step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
         curr_step++;
