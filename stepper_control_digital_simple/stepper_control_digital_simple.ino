@@ -14,8 +14,8 @@
 VL6180X sensor;
 
 // Nonvolatile Memory
-#include <DueFlashStorage.h>
-DueFlashStorage dueFlashStorage;
+//#include <DueFlashStorage.h>
+//DueFlashStorage dueFlashStorage;
 #define ADDRESS 0
 
 // Endstop Switch constants
@@ -45,19 +45,7 @@ void setup() {
 }
 
 void loop() {
-  int curr_step = (int) dueFlashStorage.read(ADDRESS);
-  if(Serial.available()){
-    String message = Serial.readString();
-    Serial.print("Received: "); Serial.println(message);
-    
-    // Check whether it's a STOP or PULSE WIDTH message
-    if(message.chartAt(0) == 'S'){ EMERGENCY_STOP = !EMERGENCY_STOP; } // Turns EMERGENCY_STOP On or Off 
-    else if(!isnan(message.toFloat())){ // Changes pulse width
-      Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
-      PULSE_WIDTH = max(message.toFloat(), 5); // Makes sure that any new pulse width is at least 5 us
-    }
-    else{ Serial.println("Serial Message not understood"); }
-  }
+  serialCommandRead();
   if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
     Serial.println("Stepper On");
     if(digitalRead(DIR_INPUT_PIN)){
@@ -93,9 +81,27 @@ void step(bool forward, float delayMs){
   delayMicroseconds(100);
 }
 
+void serialCommandRead(){
+  if(Serial.available()){
+    String message = Serial.readString();
+    Serial.print("Received: "); Serial.println(message);
+    
+    // Check whether it's a STOP or PULSE WIDTH message
+    if(message.chartAt(0) == 'S'){ EMERGENCY_STOP = !EMERGENCY_STOP; } // Turns EMERGENCY_STOP On or Off 
+    else if(!isnan(message.toFloat())){ // Changes pulse width
+      Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
+      PULSE_WIDTH = max(message.toFloat(), 5); // Makes sure that any new pulse width is at least 5 us
+    }
+    else{ Serial.println("Serial Message not understood"); }
+  }
+}
+
 void retractPosition(){
   Serial.println("Retracting Extruder");
-  while(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){ step(false, RETRACT_PULSE_WIDTH); }
+  while(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
+    serialCommandRead();
+    step(false, RETRACT_PULSE_WIDTH);
+  }
   dueFlashStorage.write(ADDRESS, 0);
   Serial.println("Extruder Fully Retracted");
 }
