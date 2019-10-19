@@ -37,9 +37,9 @@ void setup() {
   pinMode(ON_OFF_PIN, INPUT); pinMode(DIR_INPUT_PIN, INPUT); pinMode(ENDSTOP_BACK_PIN, INPUT); pinMode(TYPE_START, INPUT);
 
   // sets up distance sensor
-  Wire.begin();
-  sensor.init(); sensor.configureDefault();
-  sensor.setScaling(3); sensor.setTimeout(500);
+  //Wire.begin();
+  //sensor.init(); sensor.configureDefault();
+  //sensor.setScaling(3); sensor.setTimeout(500);
 
   if(digitalRead(TYPE_START)){ retractPosition(); } // if clean start, retract extruder all the way
 }
@@ -50,12 +50,12 @@ void loop() {
     Serial.println("Stepper On");
     if(digitalRead(DIR_INPUT_PIN)){
       // if the movement is forward, check the distance sensor
-      if (sensor.readRangeSingleMillimeters() < 760){
+      //if (sensor.readRangeSingleMillimeters() < 760){
         step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
         //curr_step++;
         //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
-      }
-      else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
+      //}
+      //else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
     }
     else{
       // if the movement is backwards, check the endstop sensor
