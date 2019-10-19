@@ -52,8 +52,8 @@ void loop() {
       // if the movement is forward, check the distance sensor
       if (sensor.readRangeSingleMillimeters() < 760){
         step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-        curr_step++;
-        Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
+        //curr_step++;
+        //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
       }
       else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
     }
@@ -61,13 +61,13 @@ void loop() {
       // if the movement is backwards, check the endstop sensor
       if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
         step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-        curr_step--;
-        Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
+        //curr_step--;
+        //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
       }
       else{ Serial.println("ENDSTOP ACTIVATED"); }
     }
   }
-  dueFlashStorage.write(ADDRESS, (byte) curr_step);
+  //dueFlashStorage.write(ADDRESS, (byte) curr_step);
 }
 
 void step(bool forward, float delayMs){
