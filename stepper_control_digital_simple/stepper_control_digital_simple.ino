@@ -41,7 +41,7 @@ void setup() {
   //sensor.init(); sensor.configureDefault();
   //sensor.setScaling(3); sensor.setTimeout(500);
 
-  if(digitalRead(TYPE_START)){ retractPosition(); } // if clean start, retract extruder all the way
+  //if(digitalRead(TYPE_START)){ retractPosition(); } // if clean start, retract extruder all the way
 }
 
 void loop() {
@@ -87,7 +87,11 @@ void serialCommandRead(){
     Serial.print("Received: "); Serial.println(message);
     
     // Check whether it's a STOP or PULSE WIDTH message
-    if(message.chartAt(0) == 'S'){ EMERGENCY_STOP = !EMERGENCY_STOP; } // Turns EMERGENCY_STOP On or Off 
+    if(message.charAt(0) == 'S'){
+      EMERGENCY_STOP = !EMERGENCY_STOP;
+      if(EMERGENCY_STOP){Serial.println("Emergency Stop ON");}
+      else{Serial.println("Emergency Stop OFF");}
+    } // Turns EMERGENCY_STOP On or Off 
     else if(!isnan(message.toFloat())){ // Changes pulse width
       Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
       PULSE_WIDTH = max(message.toFloat(), 5); // Makes sure that any new pulse width is at least 5 us
@@ -102,6 +106,6 @@ void retractPosition(){
     serialCommandRead();
     step(false, RETRACT_PULSE_WIDTH);
   }
-  dueFlashStorage.write(ADDRESS, 0);
+  //dueFlashStorage.write(ADDRESS, 0);
   Serial.println("Extruder Fully Retracted");
 }
