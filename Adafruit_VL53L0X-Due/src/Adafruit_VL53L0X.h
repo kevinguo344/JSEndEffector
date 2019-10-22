@@ -20,7 +20,7 @@
   #include "WProgram.h"
 #endif
 
-#include "Wire.h"
+#include "Wire2.h"
 #include "vl53l0x_api.h"
 
 #define VL53L0X_I2C_ADDR  0x29
