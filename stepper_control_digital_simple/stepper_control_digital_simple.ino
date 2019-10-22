@@ -13,11 +13,6 @@
 #include <VL6180X.h>
 VL6180X sensor;
 
-// Nonvolatile Memory
-//#include <DueFlashStorage.h>
-//DueFlashStorage dueFlashStorage;
-#define ADDRESS 0
-
 // Endstop Switch constants
 #define SWITCH_ON 0
 #define SWITCH_OFF 1
@@ -85,7 +80,6 @@ void serialCommandRead(){
   if(Serial.available()){
     String message = Serial.readString();
     Serial.print("Received: "); Serial.println(message);
-    
     // Check whether it's a STOP or PULSE WIDTH message
     if(message.charAt(0) == 'S'){
       EMERGENCY_STOP = !EMERGENCY_STOP;
@@ -106,6 +100,5 @@ void retractPosition(){
     serialCommandRead();
     step(false, RETRACT_PULSE_WIDTH);
   }
-  //dueFlashStorage.write(ADDRESS, 0);
   Serial.println("Extruder Fully Retracted");
 }
