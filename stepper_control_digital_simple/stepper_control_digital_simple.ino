@@ -9,9 +9,9 @@
 #define TYPE_START 26
 
 // Distance Sensor constants
-#include <Wire.h>
-#include <VL6180X.h>
-VL6180X sensor;
+#include "Adafruit_VL53L0X.h"
+Adafruit_VL53L0X lox = Adafruit_VL53L0X();
+VL53L0X_RangingMeasurementData_t measure;
 
 // Endstop Switch constants
 #define SWITCH_ON 0
@@ -32,36 +32,43 @@ void setup() {
   pinMode(ON_OFF_PIN, INPUT); pinMode(DIR_INPUT_PIN, INPUT); pinMode(ENDSTOP_BACK_PIN, INPUT); pinMode(TYPE_START, INPUT);
 
   // sets up distance sensor
-  //Wire.begin();
-  //sensor.init(); sensor.configureDefault();
-  //sensor.setScaling(3); sensor.setTimeout(500);
+  if (!lox.begin()) {
+    Serial.println(F("Failed to boot VL53L0X"));
+    while(1);
+  }
 
   //if(digitalRead(TYPE_START)){ retractPosition(); } // if clean start, retract extruder all the way
 }
 
 void loop() {
   serialCommandRead();
-  if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
-    Serial.println("Stepper On");
-    if(digitalRead(DIR_INPUT_PIN)){
-      // if the movement is forward, check the distance sensor
-      //if (sensor.readRangeSingleMillimeters() < 760){
-        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-        //curr_step++;
-        //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
-      //}
-      //else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
-    }
-    else{
-      // if the movement is backwards, check the endstop sensor
-      if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
-        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-        //curr_step--;
-        //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
+  lox.rangingTest(&measure, false);
+  if(measure.RangeStatus != 4){
+    Serial.print("Distance (mm): "); Serial.println(measure.RangeMilliMeter);
+    if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
+      Serial.println("Stepper On");
+      if(digitalRead(DIR_INPUT_PIN)){
+        // if the movement is forward, check the distance sensor
+        //if (sensor.readRangeSingleMillimeters() < 760){
+          step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
+          //curr_step++;
+          //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
+        //}
+        //else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
       }
-      else{ Serial.println("ENDSTOP ACTIVATED"); }
+      else{
+        // if the movement is backwards, check the endstop sensor
+        if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
+          step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
+          //curr_step--;
+          //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
+        }
+        else{ Serial.println("ENDSTOP ACTIVATED"); }
+      }
     }
   }
+  
+  
   //dueFlashStorage.write(ADDRESS, (byte) curr_step);
 }
 
