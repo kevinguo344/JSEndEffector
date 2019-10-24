@@ -42,7 +42,6 @@ void loop() {
   }
   else{
      digitalWrite(OUTPUT_PIN, LOW);
-     
      Serial.println("UNDER LIMIT");
   }
   delay(100);

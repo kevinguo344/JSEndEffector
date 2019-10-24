@@ -35,28 +35,18 @@ void loop() {
   Serial.println(digitalRead(SENSOR_FRONT_PIN));
   if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
     Serial.println("Stepper On");
-    //Serial.print("Direction: ");
     if(digitalRead(DIR_INPUT_PIN)){
       // if the movement is forward, check the distance sensor
-      if (!digitalRead(SENSOR_FRONT_PIN)){
-        //Serial.println("Forward");
-        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-      }
+      if (!digitalRead(SENSOR_FRONT_PIN)){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
       else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
     }
     else{
       // if the movement is backwards, check the endstop sensor
-      if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
-        //Serial.println("Backwards");
-        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-      }
+      if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
       else{ Serial.println("ENDSTOP ACTIVATED"); }
     }
   }
-  else{delay(100);}
-  
-  
-  //dueFlashStorage.write(ADDRESS, (byte) curr_step);
+  else{ delay(100); }
 }
 
 void step(bool forward, float delayMs){
@@ -76,11 +66,13 @@ void serialCommandRead(){
     Serial.print("Received: "); Serial.println(message);
     // Check whether it's a STOP or PULSE WIDTH message
     if(message.charAt(0) == 'S'){
+      // Turns EMERGENCY_STOP On or Off 
       EMERGENCY_STOP = !EMERGENCY_STOP;
       if(EMERGENCY_STOP){Serial.println("Emergency Stop ON");}
       else{Serial.println("Emergency Stop OFF");}
-    } // Turns EMERGENCY_STOP On or Off 
-    else if(!isnan(message.toFloat())){ // Changes pulse width
+    }
+    else if(!isnan(message.toFloat())){
+      // Changes pulse width (and therefore motor speed)
       Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
       PULSE_WIDTH = max(message.toFloat(), 5); // Makes sure that any new pulse width is at least 5 us
     }
