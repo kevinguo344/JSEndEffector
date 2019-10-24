@@ -2,16 +2,12 @@
 #define STEP_PIN 9
 #define DIRECTION_PIN 10
 #define ENDSTOP_BACK_PIN 11
+#define SENSOR_FRONT_PIN 12
 
 // Input Pin definitions
 #define ON_OFF_PIN 22
 #define DIR_INPUT_PIN 24
 #define TYPE_START 26
-
-// Distance Sensor constants
-#include "Adafruit_VL53L0X.h"
-Adafruit_VL53L0X lox = Adafruit_VL53L0X();
-VL53L0X_RangingMeasurementData_t measure;
 
 // Endstop Switch constants
 #define SWITCH_ON 0
@@ -19,54 +15,45 @@ VL53L0X_RangingMeasurementData_t measure;
 
 // Pulse Width constants
 #define RETRACT_PULSE_WIDTH 50
-int PULSE_WIDTH = 25;
+int PULSE_WIDTH = 10;
 
 // if EMERGENCY_STOP is true, will not continue to move
 boolean EMERGENCY_STOP = false;
+
+int distance_reading;
 
 void setup() {
   Serial.begin(115200);
 
   // sets up mode for digital pins
   pinMode(STEP_PIN, OUTPUT); pinMode(DIRECTION_PIN, OUTPUT);
-  pinMode(ON_OFF_PIN, INPUT); pinMode(DIR_INPUT_PIN, INPUT); pinMode(ENDSTOP_BACK_PIN, INPUT); pinMode(TYPE_START, INPUT);
-
-  // sets up distance sensor
-  if (!lox.begin()) {
-    Serial.println(F("Failed to boot VL53L0X"));
-    while(1);
-  }
-
-  //if(digitalRead(TYPE_START)){ retractPosition(); } // if clean start, retract extruder all the way
+  pinMode(ON_OFF_PIN, INPUT); pinMode(DIR_INPUT_PIN, INPUT); pinMode(ENDSTOP_BACK_PIN, INPUT); pinMode(SENSOR_FRONT_PIN, INPUT);
 }
 
 void loop() {
   serialCommandRead();
-  lox.rangingTest(&measure, false);
-  if(measure.RangeStatus != 4){
-    Serial.print("Distance (mm): "); Serial.println(measure.RangeMilliMeter);
-    if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
-      Serial.println("Stepper On");
-      if(digitalRead(DIR_INPUT_PIN)){
-        // if the movement is forward, check the distance sensor
-        //if (sensor.readRangeSingleMillimeters() < 760){
-          step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-          //curr_step++;
-          //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
-        //}
-        //else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
+  Serial.println(digitalRead(DIR_INPUT_PIN));
+  if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
+    Serial.println("Stepper On");
+    //Serial.print("Direction: ");
+    if(digitalRead(DIR_INPUT_PIN)){
+      // if the movement is forward, check the distance sensor
+      if (!digitalRead(SENSOR_FRONT_PIN)){
+        //Serial.println("Forward");
+        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
       }
-      else{
-        // if the movement is backwards, check the endstop sensor
-        if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
-          step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
-          //curr_step--;
-          //Serial.print("Current Position"); Serial.println(dueFlashStorage.read(ADDRESS));
-        }
-        else{ Serial.println("ENDSTOP ACTIVATED"); }
+      else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
+    }
+    else{
+      // if the movement is backwards, check the endstop sensor
+      if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
+        //Serial.println("Backwards");
+        step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH);
       }
+      else{ Serial.println("ENDSTOP ACTIVATED"); }
     }
   }
+  else{delay(100);}
   
   
   //dueFlashStorage.write(ADDRESS, (byte) curr_step);
@@ -77,7 +64,7 @@ void step(bool forward, float delayMs){
   // Step: |<------HIGH for Pulse Width (in microseconds)------>||<------ LOW for 100 microseconds)------>| 
   if(forward){ digitalWrite(DIRECTION_PIN, HIGH); }
   else{ digitalWrite(DIRECTION_PIN, LOW); }
-  digitalWrite(STEP_PIN, HIGH);                                     // starts pulse by setting step pin to high 
+  digitalWrite(STEP_PIN, HIGH);                                     // starts pulse by setting step pin to high
   delayMicroseconds(delayMs);                                       // delay must be greater than 3 us according to Arduino docs
   digitalWrite(STEP_PIN, LOW);                                      // finishes pulse by going to low
   delayMicroseconds(100);
