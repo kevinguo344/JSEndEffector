@@ -32,7 +32,7 @@ void setup() {
 
 void loop() {
   serialCommandRead();
-  Serial.println(digitalRead(DIR_INPUT_PIN));
+  Serial.println(digitalRead(SENSOR_FRONT_PIN));
   if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
     Serial.println("Stepper On");
     //Serial.print("Direction: ");
