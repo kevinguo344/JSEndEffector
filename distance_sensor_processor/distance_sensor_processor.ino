@@ -1,7 +1,7 @@
 // based on https://www.arduino.cc/en/tutorial/smoothing
 
 #include "Adafruit_VL53L0X.h"
-#define DISTANCE_PIN 9
+#define OUTPUT_PIN 13
 #define NUM_READINGS 10
 
 Adafruit_VL53L0X sensor = Adafruit_VL53L0X();
@@ -14,7 +14,7 @@ int average = 0;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(DISTANCE_PIN, OUTPUT);
+  pinMode(OUTPUT_PIN, OUTPUT);
   if (!sensor.begin()) {
     Serial.println(F("Failed to boot VL53L0X"));
     while(1);
@@ -37,9 +37,13 @@ void loop() {
   Serial.print("Distance (mm): "); Serial.println(average);
   
   if(average > 420){
-      digitalWrite(DISTANCE_PIN, HIGH);
+      digitalWrite(OUTPUT_PIN, HIGH);
       Serial.println("OVER LIMIT");
   }
-  else{ digitalWrite(DISTANCE_PIN, LOW); }
+  else{
+     digitalWrite(OUTPUT_PIN, LOW);
+     
+     Serial.println("UNDER LIMIT");
+  }
   delay(100);
 }
