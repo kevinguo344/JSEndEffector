@@ -17,6 +17,13 @@
 #define RETRACT_PULSE_WIDTH 50
 int PULSE_WIDTH = 10;
 
+// Message Fragments
+String OnOffFrag = "/Motor:";
+String DirectionFrag = "/Direction:";
+String PulseWidthFrag = "/Pulse Width:";
+String RetractingFrag = "/Retracting:";
+String EmergencyStopFrag = "/Emergency Stop:";
+String DistanceSensorFrag = "/Distance Sensor:";
 // if EMERGENCY_STOP is true, will not continue to move
 boolean EMERGENCY_STOP = false;
 
@@ -32,18 +39,16 @@ void setup() {
 
 void loop() {
   serialCommandRead();
-  Serial.println(digitalRead(SENSOR_FRONT_PIN));
+  Serial.println(OnOffFrag + digitalRead(ON_OFF_PIN) + DirectionFrag + digitalRead(DIR_INPUT_PIN) + PulseWidthFrag + PULSE_WIDTH + RetractingFrag + false + EmergencyStopFrag + EMERGENCY_STOP + DistanceSensorFrag + digitalRead(SENSOR_FRONT_PIN));
   if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
-    Serial.println("Stepper On");
     if(digitalRead(DIR_INPUT_PIN)){
       // if the movement is forward, check the distance sensor
       if (!digitalRead(SENSOR_FRONT_PIN)){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
-      else{ Serial.println("DISTANCE SENSOR ACTIVATED"); retractPosition(); }
+      else{ retractPosition(); }
     }
     else{
       // if the movement is backwards, check the endstop sensor
       if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
-      else{ Serial.println("ENDSTOP ACTIVATED"); }
     }
   }
   else{ delay(100); }
@@ -63,28 +68,27 @@ void step(bool forward, float delayMs){
 void serialCommandRead(){
   if(Serial.available()){
     String message = Serial.readString();
-    Serial.print("Received: "); Serial.println(message);
+    //Serial.print("Received: "); Serial.println(message);
     // Check whether it's a STOP or PULSE WIDTH message
     if(message.charAt(0) == 'S'){
       // Turns EMERGENCY_STOP On or Off 
       EMERGENCY_STOP = !EMERGENCY_STOP;
-      if(EMERGENCY_STOP){Serial.println("Emergency Stop ON");}
-      else{Serial.println("Emergency Stop OFF");}
+      //if(EMERGENCY_STOP){Serial.println("Emergency Stop ON");}
+      //else{Serial.println("Emergency Stop OFF");}
     }
     else if(!isnan(message.toFloat())){
       // Changes pulse width (and therefore motor speed)
-      Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
+      //Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
       PULSE_WIDTH = max(message.toFloat(), 5); // Makes sure that any new pulse width is at least 5 us
     }
-    else{ Serial.println("Serial Message not understood"); }
   }
 }
 
 void retractPosition(){
-  Serial.println("Retracting Extruder");
+  Serial.println(OnOffFrag + digitalRead(ON_OFF_PIN) + DirectionFrag + digitalRead(DIR_INPUT_PIN) + PulseWidthFrag + PULSE_WIDTH + RetractingFrag + true + DistanceSensorFrag + digitalRead(SENSOR_FRONT_PIN));
   while(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
     serialCommandRead();
     step(false, RETRACT_PULSE_WIDTH);
   }
-  Serial.println("Extruder Fully Retracted");
+  //Serial.println("Extruder Fully Retracted");
 }
