@@ -51,7 +51,7 @@ void loop() {
       if(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
     }
   }
-  else{ delay(100); }
+  //else{ delay(100); }
 }
 
 void step(bool forward, float delayMs){
@@ -75,6 +75,9 @@ void serialCommandRead(){
       EMERGENCY_STOP = !EMERGENCY_STOP;
       //if(EMERGENCY_STOP){Serial.println("Emergency Stop ON");}
       //else{Serial.println("Emergency Stop OFF");}
+    }
+    else if(message.charAt(0)=='R'){
+      retractPosition();
     }
     else if(!isnan(message.toFloat())){
       // Changes pulse width (and therefore motor speed)
