@@ -44,7 +44,7 @@ void loop() {
     if(digitalRead(DIR_INPUT_PIN)){
       // if the movement is forward, check the distance sensor
       if (!digitalRead(SENSOR_FRONT_PIN)){ step(digitalRead(DIR_INPUT_PIN), PULSE_WIDTH); }
-      else{ retractPosition(); }
+      //else{ retractPosition(); }
     }
     else{
       // if the movement is backwards, check the endstop sensor
