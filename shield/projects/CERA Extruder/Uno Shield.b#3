@@ -128,16 +128,16 @@
 <wire x1="66.04" y1="40.64" x2="66.04" y2="52.07" width="0.1524" layer="20"/>
 <wire x1="66.04" y1="52.07" x2="64.77" y2="53.34" width="0.1524" layer="20"/>
 <wire x1="64.77" y1="53.34" x2="12.7" y2="53.34" width="0.1524" layer="20"/>
-<wire x1="31.75" y1="40.64" x2="31.75" y2="30.48" width="0.1524" layer="21"/>
+<wire x1="31.75" y1="40.64" x2="31.75" y2="30.48" width="0.1524" layer="21" style="shortdash"/>
 <wire x1="31.75" y1="30.48" x2="33.02" y2="29.21" width="0.1524" layer="21"/>
 <wire x1="48.26" y1="29.21" x2="49.53" y2="30.48" width="0.1524" layer="21"/>
-<wire x1="49.53" y1="30.48" x2="49.53" y2="40.64" width="0.1524" layer="21"/>
-<wire x1="49.53" y1="40.64" x2="31.75" y2="40.64" width="0.1524" layer="21"/>
-<wire x1="31.75" y1="12.7" x2="31.75" y2="22.86" width="0.1524" layer="21"/>
-<wire x1="31.75" y1="22.86" x2="33.02" y2="24.13" width="0.1524" layer="21"/>
-<wire x1="48.26" y1="24.13" x2="49.53" y2="22.86" width="0.1524" layer="21"/>
-<wire x1="49.53" y1="22.86" x2="49.53" y2="12.7" width="0.1524" layer="21"/>
-<wire x1="49.53" y1="12.7" x2="31.75" y2="12.7" width="0.1524" layer="21"/>
+<wire x1="49.53" y1="30.48" x2="49.53" y2="40.64" width="0.1524" layer="21" style="shortdash"/>
+<wire x1="49.53" y1="40.64" x2="31.75" y2="40.64" width="0.1524" layer="21" style="shortdash"/>
+<wire x1="31.75" y1="12.7" x2="31.75" y2="22.86" width="0.1524" layer="21" style="shortdash"/>
+<wire x1="31.75" y1="22.86" x2="33.02" y2="24.13" width="0.1524" layer="21" style="shortdash"/>
+<wire x1="48.26" y1="24.13" x2="49.53" y2="22.86" width="0.1524" layer="21" style="shortdash"/>
+<wire x1="49.53" y1="22.86" x2="49.53" y2="12.7" width="0.1524" layer="21" style="shortdash"/>
+<wire x1="49.53" y1="12.7" x2="31.75" y2="12.7" width="0.1524" layer="21" style="shortdash"/>
 <text x="40.9448" y="13.7414" size="0.762" layer="21" font="vector" ratio="15">GND</text>
 <text x="38.735" y="13.7668" size="0.762" layer="21" font="vector" ratio="15">LV</text>
 <text x="43.4848" y="13.7414" size="0.762" layer="21" font="vector" ratio="15">LV3</text>
@@ -157,6 +157,8 @@
 <wire x1="48.26" y1="20.32" x2="48.26" y2="33.02" width="0.1524" layer="21"/>
 <wire x1="48.26" y1="33.02" x2="33.02" y2="33.02" width="0.1524" layer="21"/>
 <text x="40.64" y="26.67" size="1.2192" layer="21" font="vector" align="center">Level Shifter</text>
+<text x="40.64" y="24.13" size="0.6096" layer="21" font="vector" align="center">Low Voltage Side</text>
+<text x="40.64" y="29.21" size="0.6096" layer="21" font="vector" align="center">High Voltage Side</text>
 </plain>
 <libraries>
 <library name="SparkFun">
