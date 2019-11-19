@@ -31,7 +31,6 @@ int distance_reading;
 
 void setup() {
   Serial.begin(115200);
-  Serial.setTimeout(10);
   // sets up mode for digital pins
   pinMode(STEP_PIN, OUTPUT); pinMode(DIRECTION_PIN, OUTPUT);
   pinMode(ON_OFF_PIN, INPUT); pinMode(DIR_INPUT_PIN, INPUT); pinMode(ENDSTOP_BACK_PIN, INPUT); pinMode(SENSOR_FRONT_PIN, INPUT);
@@ -81,7 +80,6 @@ void serialCommandRead(){
     }
     else if(!isnan(message.toFloat())){
       // Changes pulse width (and therefore motor speed)
-      //Serial.print("Changing Pulse Width from "); Serial.print(PULSE_WIDTH); Serial.print(" to "); Serial.println(max(message.toFloat(), 5));
       PULSE_WIDTH = max(message.toFloat(), 5); // Makes sure that any new pulse width is at least 5 us
     }
   }
