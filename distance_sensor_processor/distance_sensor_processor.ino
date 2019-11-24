@@ -36,7 +36,7 @@ void loop() {
   }
   Serial.print("Distance (mm): "); Serial.println(average);
   
-  if(average > 435){
+  if(average > 450){
       digitalWrite(OUTPUT_PIN, HIGH);
       Serial.println("OVER LIMIT");
   }

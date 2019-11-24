@@ -38,7 +38,7 @@ void setup() {
 
 void loop() {
   serialCommandRead();
-  Serial.println(OnOffFrag + digitalRead(ON_OFF_PIN) + DirectionFrag + digitalRead(DIR_INPUT_PIN) + PulseWidthFrag + PULSE_WIDTH + RetractingFrag + false + EmergencyStopFrag + EMERGENCY_STOP + DistanceSensorFrag + digitalRead(SENSOR_FRONT_PIN));
+  statusMessageSend(PULSE_WIDTH,false);
   if(digitalRead(ON_OFF_PIN) && !EMERGENCY_STOP){
     if(digitalRead(DIR_INPUT_PIN)){
       // if the movement is forward, check the distance sensor
@@ -58,22 +58,19 @@ void step(bool forward, float delayMs){
   // Step: |<------HIGH for Pulse Width (in microseconds)------>||<------ LOW for 100 microseconds)------>| 
   if(forward){ digitalWrite(DIRECTION_PIN, HIGH); }
   else{ digitalWrite(DIRECTION_PIN, LOW); }
-  digitalWrite(STEP_PIN, HIGH);                                     // starts pulse by setting step pin to high
-  delayMicroseconds(delayMs);                                       // delay must be greater than 3 us according to Arduino docs
-  digitalWrite(STEP_PIN, LOW);                                      // finishes pulse by going to low
+  digitalWrite(STEP_PIN, HIGH);                       // starts pulse by setting step pin to high
+  delayMicroseconds(delayMs);                         // delay must be greater than 3 us according to Arduino docs
+  digitalWrite(STEP_PIN, LOW);                        // finishes pulse by going to low
   delayMicroseconds(100);
 }
 
 void serialCommandRead(){
   if(Serial.available()){
     String message = Serial.readString();
-    //Serial.print("Received: "); Serial.println(message);
     // Check whether it's a STOP or PULSE WIDTH message
     if(message.charAt(0) == 'S'){
-      // Turns EMERGENCY_STOP On or Off 
+      // Turns EMERGENCY_STOP On or Off
       EMERGENCY_STOP = !EMERGENCY_STOP;
-      //if(EMERGENCY_STOP){Serial.println("Emergency Stop ON");}
-      //else{Serial.println("Emergency Stop OFF");}
     }
     else if(message.charAt(0)=='R'){
       retractPosition();
@@ -85,8 +82,12 @@ void serialCommandRead(){
   }
 }
 
+void statusMessageSend(int pulseWidth, bool isRetracting){
+  Serial.println(OnOffFrag + digitalRead(ON_OFF_PIN) + DirectionFrag + digitalRead(DIR_INPUT_PIN) + PulseWidthFrag + pulseWidth + RetractingFrag + isRetracting + EmergencyStopFrag + EMERGENCY_STOP + DistanceSensorFrag + digitalRead(SENSOR_FRONT_PIN));
+}
+
 void retractPosition(){
-  Serial.println(OnOffFrag + digitalRead(ON_OFF_PIN) + DirectionFrag + digitalRead(DIR_INPUT_PIN) + PulseWidthFrag + PULSE_WIDTH + RetractingFrag + true + DistanceSensorFrag + digitalRead(SENSOR_FRONT_PIN));
+  statusMessageSend(RETRACT_PULSE_WIDTH, true);
   while(digitalRead(ENDSTOP_BACK_PIN) == SWITCH_OFF){
     serialCommandRead();
     step(false, RETRACT_PULSE_WIDTH);
