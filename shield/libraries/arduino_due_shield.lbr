@@ -926,7 +926,7 @@
 <pad name="3V3X4" x="31.75" y="19.05" drill="1.016" diameter="1.8796"/>
 <text x="52.07" y="12.7" size="1.016" layer="25">Made for Arduino Due
 Designed in Ithaca, NY by Kevin Guo
-Design Date: October 2019</text>
+Design Date: December 2019</text>
 <pad name="3V3X1" x="31.75" y="11.43" drill="1.016" diameter="1.8796"/>
 <pad name="3V3X5" x="31.75" y="21.59" drill="1.016" diameter="1.8796"/>
 <pad name="3V3X6" x="31.75" y="24.13" drill="1.016" diameter="1.8796"/>
@@ -973,27 +973,27 @@ C.E.R.A Extruder Shield</text>
 <wire x1="97.4344" y1="54.3052" x2="98.9584" y2="52.7812" width="0.254" layer="21"/>
 <wire x1="98.9584" y1="52.7812" x2="98.9584" y2="41.3512" width="0.254" layer="21"/>
 <pad name="PULSE" x="49.53" y="38.1" drill="1.0668"/>
-<pad name="DIRECTION" x="45.72" y="38.1" drill="1.0668"/>
+<pad name="DIRECTION" x="46.99" y="38.1" drill="1.0668"/>
 <pad name="ENDSTOP" x="35.56" y="38.1" drill="1.0668"/>
-<pad name="DIST" x="31.75" y="38.1" drill="1.0668"/>
+<pad name="DIST" x="33.02" y="38.1" drill="1.0668"/>
 <text x="49.53" y="29.21" size="1.016" layer="21" font="vector" ratio="12" rot="R90">PULSE</text>
-<text x="45.72" y="29.21" size="1.016" layer="21" font="vector" ratio="12" rot="R90">DIRECTION</text>
+<text x="46.99" y="29.21" size="1.016" layer="21" font="vector" ratio="12" rot="R90">DIRECTION</text>
 <text x="35.56" y="29.21" size="1.016" layer="21" font="vector" ratio="12" rot="R90">ENDSTOP</text>
-<text x="31.75" y="29.21" size="1.016" layer="21" font="vector" ratio="12" rot="R90">DISTANCE</text>
-<wire x1="29.21" y1="40.64" x2="38.1" y2="40.64" width="0.127" layer="21"/>
+<text x="33.02" y="29.21" size="1.016" layer="21" font="vector" ratio="12" rot="R90">DISTANCE</text>
+<wire x1="30.48" y1="40.64" x2="38.1" y2="40.64" width="0.127" layer="21"/>
 <wire x1="38.1" y1="40.64" x2="38.1" y2="27.94" width="0.127" layer="21"/>
-<wire x1="38.1" y1="27.94" x2="29.21" y2="27.94" width="0.127" layer="21"/>
-<wire x1="29.21" y1="27.94" x2="29.21" y2="40.64" width="0.127" layer="21"/>
-<text x="33.02" y="30.48" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">INPUT</text>
-<text x="36.83" y="30.48" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">INPUT</text>
-<text x="46.99" y="30.48" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">OUTPUT</text>
-<text x="50.8" y="30.48" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">OUTPUT</text>
-<wire x1="43.18" y1="40.64" x2="43.18" y2="27.94" width="0.127" layer="21"/>
-<wire x1="43.18" y1="27.94" x2="52.07" y2="27.94" width="0.127" layer="21"/>
+<wire x1="38.1" y1="27.94" x2="30.48" y2="27.94" width="0.127" layer="21"/>
+<wire x1="30.48" y1="27.94" x2="30.48" y2="40.64" width="0.127" layer="21"/>
+<text x="33.9598" y="29.972" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">(INPUT)</text>
+<text x="36.4998" y="29.972" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">(INPUT)</text>
+<text x="47.879" y="29.972" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">(OUTPUT)</text>
+<text x="50.419" y="29.972" size="0.6096" layer="21" font="vector" ratio="12" rot="R90">(OUTPUT)</text>
+<wire x1="44.45" y1="40.64" x2="44.45" y2="27.94" width="0.127" layer="21"/>
+<wire x1="44.45" y1="27.94" x2="52.07" y2="27.94" width="0.127" layer="21"/>
 <wire x1="52.07" y1="27.94" x2="52.07" y2="40.64" width="0.127" layer="21"/>
-<wire x1="52.07" y1="40.64" x2="43.18" y2="40.64" width="0.127" layer="21"/>
-<text x="27.94" y="27.94" size="1.016" layer="21" font="vector" ratio="12" rot="R90">ENDSTOPS PINS</text>
-<text x="41.91" y="27.94" size="1.016" layer="21" font="vector" ratio="12" rot="R90">STEPPER PINS</text>
+<wire x1="52.07" y1="40.64" x2="44.45" y2="40.64" width="0.127" layer="21"/>
+<text x="29.21" y="27.94" size="1.016" layer="21" font="vector" ratio="12" rot="R90">ENDSTOPS PINS</text>
+<text x="43.18" y="27.94" size="1.016" layer="21" font="vector" ratio="12" rot="R90">STEPPER PINS</text>
 </package>
 </packages>
 <symbols>
